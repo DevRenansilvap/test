@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Rota+</title>
+<meta name="theme-color" content="#0e1318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rota+">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{
+    --bg:#0e1318;
+    --bg-grad-a:#0c2b2e;
+    --bg-grad-b:#0e1318;
+    --card:#171d24;
+    --card-2:#1c232b;
+    --border:#252d36;
+    --text:#f2f5f7;
+    --muted:#8b96a3;
+    --muted-2:#5f6b78;
+    --accent:#2dd4c4;
+    --accent-dark:#1ea89b;
+    --accent-soft:rgba(45,212,196,0.14);
+    --green:#3ecf7a;
+    --red:#ef5b5b;
+    --purple:#b98af0;
+    --purple-soft:rgba(185,138,240,0.16);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    overscroll-behavior-y:none;
+  }
+  #root{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:
+      radial-gradient(120% 60% at 50% 0%, var(--bg-grad-a) 0%, var(--bg-grad-b) 55%);
+    position:relative;
+  }
+  .status-spacer{ height:env(safe-area-inset-top,0px); }
+  header.topbar{
+    padding:18px 20px 6px 20px;
+  }
+  header.topbar h1{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 2px 0;
+    letter-spacing:-0.02em;
+  }
+  header.topbar p.sub{
+    margin:0;
+    color:var(--muted);
+    font-size:13.5px;
+  }
+  main{
+    flex:1;
+    padding:14px 16px 100px 16px;
+    overflow-y:auto;
+  }
+  .actions-row{
+    display:flex;
+    gap:10px;
+    margin:12px 0 16px 0;
+  }
+  .btn{
+    border:none;
+    border-radius:12px;
+    padding:11px 14px;
+    font-size:14.5px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#052322;
+  }
+  .btn-primary:active{background:var(--accent-dark);}
+  .btn-secondary{
+    background:var(--card-2);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-block{ width:100%; justify-content:center; }
+  .btn-ghost{
+    background:transparent;
+    color:var(--accent);
+    border:1px solid var(--border);
+  }
+  .btn-danger-outline{
+    background:transparent;
+    color:var(--red);
+    border:1px solid var(--border);
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .card .label{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:6px;
+  }
+  .card .value{
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .card .hint{
+    color:var(--muted-2);
+    font-size:12.5px;
+    margin-top:4px;
+  }
+  .section-title{
+    font-size:17px;
+    font-weight:700;
+    margin:22px 0 10px 0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .section-title .link{
+    font-size:13px;
+    color:var(--accent);
+    font-weight:600;
+  }
+  .list-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 14px;
+    border-bottom:1px solid var(--border);
+  }
+  .list-item:last-child{ border-bottom:none; }
+  .icon-badge{
+    width:34px;height:34px;
+    border-radius:10px;
+    background:var(--card-2);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    color:var(--muted);
+  }
+  .li-main{ flex:1; min-width:0; }
+  .li-title{ font-size:14.5px; font-weight:600; }
+  .li-sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+  .li-value{ font-size:14.5px; font-weight:700; white-space:nowrap; }
+  .tag{
+    font-size:11px;
+    font-weight:600;
+    padding:3px 8px;
+    border-radius:20px;
+    background:var(--purple-soft);
+    color:var(--purple);
+    margin-left:6px;
+    white-space:nowrap;
+  }
+  .tag.green{ background:rgba(62,207,122,0.16); color:var(--green); }
+  .tag.muted{ background:var(--card-2); color:var(--muted); }
+  .empty{
+    text-align:center;
+    padding:28px 10px;
+    color:var(--muted);
+    font-size:13.5px;
+  }
+  .empty .emoji{ font-size:28px; display:block; margin-bottom:8px; }
+
+  nav.tabbar{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    max-width:480px;
+    margin:0 auto;
+    background:rgba(14,19,24,0.88);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);
+    display:flex;
+    padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px)) 4px;
+    z-index:40;
+  }
+  nav.tabbar button{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--muted-2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    font-size:10.5px;
+    font-family:inherit;
+    padding:4px 0;
+    cursor:pointer;
+  }
+  nav.tabbar button.active{ color:var(--accent); }
+  nav.tabbar svg{ width:21px;height:21px; }
+
+  .sheet-backdrop{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:50;
+    display:flex;
+    align-items:flex-end;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.2s;
+  }
+  .sheet-backdrop.open{ opacity:1; pointer-events:auto; }
+  .sheet{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-bottom:none;
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    border-radius:20px 20px 0 0;
+    padding:10px 20px calc(20px + env(safe-area-inset-bottom,0px)) 20px;
+    transform:translateY(100%);
+    transition:transform 0.25s cubic-bezier(.2,.9,.3,1);
+    max-height:88vh;
+    overflow-y:auto;
+  }
+  .sheet-backdrop.open .sheet{ transform:translateY(0); }
+  .sheet-handle{
+    width:36px;height:4px;background:var(--border);
+    border-radius:4px;margin:4px auto 14px auto;
+  }
+  .sheet-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:4px;
+  }
+  .sheet-head h3{ margin:0; font-size:17px; font-weight:700; }
+  .sheet-head button.close{
+    background:var(--card-2);
+    border:none;color:var(--muted);
+    width:28px;height:28px;border-radius:50%;
+    font-size:15px;cursor:pointer;
+  }
+  .sheet p.desc{ color:var(--muted); font-size:13px; margin:2px 0 16px 0; }
+  .field{ margin-bottom:14px; }
+  .field label{
+    display:block;font-size:12.5px;font-weight:600;
+    color:var(--muted);margin-bottom:6px;
+  }
+  .field input, .field select{
+    width:100%;
+    background:var(--card-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:11px 12px;
+    font-size:15px;
+    font-family:inherit;
+  }
+  .field input:focus, .field select:focus{
+    outline:none;border-color:var(--accent);
+  }
+  .row2{ display:flex; gap:10px; }
+  .row2 > *{ flex:1; }
+  .toast{
+    position:fixed;
+    bottom:96px;left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--text);
+    color:#0e1318;
+    padding:11px 18px;
+    border-radius:30px;
+    font-size:13.5px;
+    font-weight:600;
+    z-index:60;
+    opacity:0;
+    transition:all 0.25s;
+    pointer-events:none;
+    display:flex;align-items:center;gap:8px;
+    max-width:88%;
+    white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .filter-row{
+    display:flex;gap:8px;margin-bottom:12px;
+  }
+  .filter-chip{
+    flex:1;text-align:center;
+    background:var(--card-2);
+    border:1px solid var(--border);
+    color:var(--muted);
+    border-radius:10px;
+    padding:8px 0;
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .filter-chip.active{
+    background:var(--accent-soft);
+    color:var(--accent);
+    border-color:var(--accent);
+  }
+  .mini-cards{ display:flex; gap:10px; }
+  .mini-cards .card{ flex:1; padding:13px; }
+  .mini-cards .value{ font-size:18px; }
+  .swatch{
+    width:36px;height:36px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--accent-soft);color:var(--accent);
+    flex-shrink:0;
+  }
+  ::-webkit-scrollbar{ display:none; }
+  .gear-btn{
+    background:var(--card-2);
+    border:1px solid var(--border);
+    color:var(--muted);
+    width:36px;height:36px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .gear-btn svg{ width:17px;height:17px; }
+  .icon-btn-trash{
+    background:none;
+    border:none;
+    color:var(--muted-2);
+    padding:6px;
+    margin-left:2px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex;
+  }
+  .icon-btn-trash svg{ width:16px;height:16px; }
+  .icon-btn-trash:active{ color:var(--red); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+// ---------- Icons ----------
+const ICONS = {
+  home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>`,
+  car: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM3 17V11l2-5h14l2 5v6"/><path d="M5 11h14"/></svg>`,
+  bill: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1.2 1.1-2 2.5-2s2.5.8 2.5 2-1 1.7-2.5 2.2c-1.2.4-2.5 1-2.5 2.3 0 1.2 1.1 2 2.5 2s2.5-.8 2.5-2"/></svg>`,
+  wallet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7H6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15v-5"/><path d="M16 12h5v3h-5a1.5 1.5 0 0 1 0-3Z"/><path d="M3 8V6a2 2 0 0 1 2-2h12"/></svg>`,
+  archive: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg>`,
+  fuel: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 11h10"/><path d="M14 8h2l3 3v6a1.5 1.5 0 0 1-3 0"/></svg>`,
+  route: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3 3 0 0 0 3-3v-1a3 3 0 0 0-3-3H9a3 3 0 0 1-3-3V8"/></svg>`,
+  piggy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9a6 6 0 0 0-11.3-2.8L6 8H4v4h1.5"/><path d="M6.5 11V19a1 1 0 0 0 1 1H10v-2"/><path d="M14 20v-2"/><path d="M6.5 11h12.7c.5 2.8-.7 5-2.2 6v3"/><circle cx="16" cy="8.5" r=".7" fill="currentColor" stroke="none"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`,
+  shield: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3 7.5 8 9 5-1.5 8-4.5 8-9V6l-8-3Z"/></svg>`,
+  wrench: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.7 6.3 3 3L21 6a5 5 0 0 1-6.7 6.7L7 20l-3-3 7.3-7.3A5 5 0 0 1 17.7 3l-3 3.3Z"/></svg>`,
+  end: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>`,
+  x: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>`,
+  chart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>`,
+  trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/><path d="M10 11v6M14 11v6"/></svg>`,
+  gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>`,
+  sync: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6"/></svg>`,
+};
+
+// ---------- Storage ----------
+const STORAGE_KEY = "rotaplus-data-v1";
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {
+    turnos: [],
+    despesasOperacionais: [],
+    contasFixas: [],
+    gastosPessoais: [],
+    aportes: [],
+    config: { sheetsUrl: '', lastSync: null }
+  };
+}
+let DATA = loadData();
+function saveData(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// ---------- Helpers ----------
+function brl(n){
+  n = Number(n)||0;
+  return "R$ " + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function todayISO(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function fmtDate(iso){
+  if(!iso) return "";
+  const [y,m,d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+function isThisMonth(iso){
+  if(!iso) return false;
+  const d = new Date(iso+"T00:00:00");
+  const now = new Date();
+  return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+}
+function monthLabel(){
+  const now = new Date();
+  return now.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+}
+function formatDuration(ms){
+  if(ms<=0) return '0min';
+  const totalMin = Math.round(ms/60000);
+  const h = Math.floor(totalMin/60);
+  const m = totalMin%60;
+  return (h>0? h+'h ':'') + m + 'min';
+}
+
+// ---------- Google Sheets sync ----------
+function maybeSync(){
+  if(DATA.config && DATA.config.sheetsUrl) syncToSheets(true);
+}
+async function syncToSheets(silent){
+  const cfg = DATA.config||{};
+  if(!cfg.sheetsUrl){ if(!silent) showToast('Configure a URL primeiro'); return; }
+  try{
+    await fetch(cfg.sheetsUrl, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        turnos: DATA.turnos,
+        despesasOperacionais: DATA.despesasOperacionais,
+        contasFixas: DATA.contasFixas,
+        gastosPessoais: DATA.gastosPessoais,
+        aportes: DATA.aportes
+      })
+    });
+    DATA.config.lastSync = new Date().toISOString();
+    saveData();
+    if(!silent) showToast('Sincronizado com o Sheets');
+    if(state.sheet && state.sheet.name==='config') render();
+  }catch(err){
+    if(!silent) showToast('Falha ao sincronizar');
+  }
+}
+function saveSheetsConfig(){
+  const url = document.getElementById('f-sheeturl').value.trim();
+  DATA.config = DATA.config||{};
+  DATA.config.sheetsUrl = url;
+  saveData(); showToast('URL salva'); render();
+}
+
+// ---------- Delete ----------
+function deleteItem(kind, id){
+  const map = {turno:'turnos', despesa:'despesasOperacionais', conta:'contasFixas', gasto:'gastosPessoais', aporte:'aportes'};
+  const key = map[kind];
+  if(!key) return;
+  if(!confirm('Excluir este registro? Essa ação não pode ser desfeita.')) return;
+  DATA[key] = DATA[key].filter(x=>x.id!==id);
+  saveData(); render(); showToast('Excluído'); maybeSync();
+}
+
+// ---------- App State ----------
+let state = { tab: 'visao', sheet: null };
+const root = document.getElementById('root');
+
+function setTab(t){ state.tab = t; state.sheet = null; render(); window.scrollTo(0,0); }
+function openSheet(name, payload){ state.sheet = {name, payload}; render(); }
+function closeSheet(){ state.sheet = null; render(); }
+
+function showToast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = ICONS.check + `<span>${msg}</span>`;
+  el.querySelector('svg').style.width='15px';
+  el.querySelector('svg').style.flexShrink='0';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=>{
+    el.classList.remove('show');
+    setTimeout(()=> el.remove(), 300);
+  }, 1800);
+}
+
+// ---------- Computations ----------
+function computeTotals(){
+  const turnosMes = DATA.turnos.filter(t => t.status==='concluido' && isThisMonth(t.data));
+  const faturamento = turnosMes.reduce((s,t)=> s+Number(t.uber||0)+Number(t.noventaenove||0)+Number(t.pix||0), 0);
+  const kmRodados = turnosMes.reduce((s,t)=> s + Math.max(0,(Number(t.kmFinal||0)-Number(t.kmInicial||0))), 0);
+  const despesasOpMes = DATA.despesasOperacionais.filter(d=>isThisMonth(d.data)).reduce((s,d)=>s+Number(d.valor||0),0);
+  const gastosMes = DATA.gastosPessoais.filter(g=>isThisMonth(g.data)).reduce((s,g)=>s+Number(g.valor||0),0);
+  const aportesMes = DATA.aportes.filter(a=>isThisMonth(a.data)).reduce((s,a)=>s+Number(a.valor||0),0);
+  return {faturamento, kmRodados, despesasOpMes, gastosMes, aportesMes};
+}
+
+// ---------- Render: Tab Bar ----------
+function renderTabbar(){
+  const tabs = [
+    {id:'visao', label:'Visão ge...', icon:'home'},
+    {id:'trabalho', label:'Trabalho', icon:'car'},
+    {id:'contas', label:'Contas', icon:'bill'},
+    {id:'gastos', label:'Gastos', icon:'wallet'},
+    {id:'reservas', label:'Reservas', icon:'archive'},
+  ];
+  return `<nav class="tabbar">
+    ${tabs.map(t=>`
+      <button class="${state.tab===t.id?'active':''}" onclick="setTab('${t.id}')">
+        ${ICONS[t.icon]}
+        <span>${t.label}</span>
+      </button>
+    `).join('')}
+  </nav>`;
+}
+
+// ---------- Render: Visão Geral ----------
+function renderVisao(){
+  const {faturamento, despesasOpMes, gastosMes, aportesMes} = computeTotals();
+  return `
+    <div class="actions-row">
+      <button class="btn btn-primary" onclick="setTab('trabalho')">${ICONS.car}Trabalhar no carro</button>
+      <button class="btn btn-secondary" onclick="openSheet('gasto')">${ICONS.bill}Lançar gasto</button>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px 0;">
+      Acompanhe seu mês de ${monthLabel()} e escolha a próxima ação.
+    </p>
+    <div class="card">
+      <div class="label">Faturamento do carro</div>
+      <div class="value">${brl(faturamento)}</div>
+      <div class="hint">Uber, 99 e Pix no mês</div>
+    </div>
+    <div class="card">
+      <div class="label">Combustível acumulado</div>
+      <div class="value">${brl(despesasOpMes)}</div>
+      <div class="hint">Inclui lançamentos rápidos</div>
+    </div>
+    <div class="card">
+      <div class="label">Gastos pessoais</div>
+      <div class="value">${brl(gastosMes)}</div>
+      <div class="hint">Despesas lançadas no mês</div>
+    </div>
+    <div class="card">
+      <div class="label">Aportes e reservas</div>
+      <div class="value">${brl(aportesMes)}</div>
+      <div class="hint">Investimentos registrados</div>
+    </div>
+  `;
+}
+
+// ---------- Render: Trabalho ----------
+function renderTrabalho(){
+  const {faturamento, kmRodados, despesasOpMes} = computeTotals();
+  const turnoAberto = DATA.turnos.find(t=>t.status==='aberto');
+  const concluidos = DATA.turnos.filter(t=>t.status==='concluido').sort((a,b)=> b.data.localeCompare(a.data));
+  const despesasRecentes = DATA.despesasOperacionais.slice().sort((a,b)=> (b.hora||b.data).localeCompare(a.hora||a.data));
+
+  return `
+    <div class="actions-row">
+      ${turnoAberto
+        ? `<button class="btn btn-primary" onclick="openSheet('finalizarTurno')">${ICONS.end}Finalizar turno</button>`
+        : `<button class="btn btn-primary" onclick="openSheet('iniciarTurno')">${ICONS.car}Iniciar turno</button>`
+      }
+      <button class="btn btn-secondary" onclick="openSheet('despesaRapida')">${ICONS.plus}Registrar despesa</button>
+    </div>
+    <div class="card">
+      <div class="label">Faturamento registrado</div>
+      <div class="value">${brl(faturamento)}</div>
+      <div class="hint">Histórico carregado</div>
+    </div>
+    <div class="card">
+      <div class="label">Quilômetros rodados</div>
+      <div class="value">${kmRodados.toLocaleString('pt-BR')} km</div>
+      <div class="hint">Nos turnos concluídos</div>
+    </div>
+    <div class="card">
+      <div class="label">Despesas rápidas</div>
+      <div class="value">${brl(despesasOpMes)}</div>
+      <div class="hint">Lançamentos operacionais</div>
+    </div>
+
+    ${turnoAberto ? `
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <strong style="font-size:14.5px;">Turno em andamento</strong>
+          <span class="tag green">Aberto</span>
+        </div>
+        <div style="color:var(--muted);font-size:13px;">
+          Começou em ${fmtDate(turnoAberto.data)} com KM inicial ${turnoAberto.kmInicial}.
+        </div>
+      </div>
+    ` : `
+      <div class="card">
+        <strong style="font-size:14.5px;display:block;margin-bottom:4px;">Nenhum turno aberto</strong>
+        <div style="color:var(--muted);font-size:13px;margin-bottom:12px;">Inicie o turno antes de registrar o fechamento do dia.</div>
+        <button class="btn btn-primary btn-block" onclick="openSheet('iniciarTurno')">${ICONS.car}Iniciar agora</button>
+      </div>
+    `}
+
+    <div class="section-title">Despesas rápidas <span style="color:var(--muted);font-weight:500;font-size:12.5px;">${despesasRecentes.length} registros</span></div>
+    <div class="card" style="padding:4px 14px;">
+      ${despesasRecentes.length===0 ? `<div class="empty"><span class="emoji">⛽</span>Nenhuma despesa lançada ainda.</div>` :
+      despesasRecentes.map(d=>`
+        <div class="list-item">
+          <div class="icon-badge">${ICONS.fuel}</div>
+          <div class="li-main">
+            <div class="li-title">${d.descricao}</div>
+            <div class="li-sub">${fmtDate(d.data)}${d.turnoId ? ' · vinculada a um turno' : ''}</div>
+          </div>
+          <div class="li-value">${brl(d.valor)}</div>
+          <button class="icon-btn-trash" onclick="deleteItem('despesa','${d.id}')">${ICONS.trash}</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="section-title">Turnos concluídos <span style="color:var(--muted);font-weight:500;font-size:12.5px;">${concluidos.length} registros</span></div>
+    <div class="card" style="padding:4px 14px;">
+      ${concluidos.length===0 ? `<div class="empty"><span class="emoji">🚗</span>Nenhum turno concluído ainda.</div>` :
+      concluidos.map(t=>{
+        const total = Number(t.uber||0)+Number(t.noventaenove||0)+Number(t.pix||0);
+        const km = Math.max(0,(Number(t.kmFinal||0)-Number(t.kmInicial||0)));
+        const gastoCombustivel = DATA.despesasOperacionais.filter(d=>d.turnoId===t.id).reduce((s,d)=>s+Number(d.valor||0),0);
+        return `<div class="list-item" style="cursor:pointer;" onclick="openSheet('resumoTurno','${t.id}')">
+          <div class="icon-badge">${ICONS.car}</div>
+          <div class="li-main">
+            <div class="li-title">${fmtDate(t.data)}</div>
+            <div class="li-sub">Turno completo · ${t.kmInicial} → ${t.kmFinal} km</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="li-value">${brl(total)}</div>
+            <div class="li-sub">Combustível ${brl(gastoCombustivel)}</div>
+          </div>
+          <button class="icon-btn-trash" onclick="event.stopPropagation();deleteItem('turno','${t.id}')">${ICONS.trash}</button>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ---------- Render: Contas ----------
+function renderContas(){
+  const contas = DATA.contasFixas.slice().sort((a,b)=> Number(a.dia)-Number(b.dia));
+  const totalCadastrado = contas.reduce((s,c)=>s+Number(c.valor||0),0);
+  const pendentes = contas.filter(c=>!c.pago);
+  const aVencer = pendentes.reduce((s,c)=>s+Number(c.valor||0),0);
+  const filter = state.contasFilter || 'todas';
+  const filtered = contas.filter(c => filter==='todas' ? true : filter==='pendentes' ? !c.pago : c.pago);
+
+  return `
+    <div class="actions-row">
+      <button class="btn btn-primary" onclick="openSheet('contaFixa')">${ICONS.plus}Adicionar conta</button>
+      <button class="btn btn-secondary" onclick="marcarTodasPagas()">${ICONS.check}Marcar todas pagas</button>
+    </div>
+    <div class="card">
+      <div class="label">Total cadastrado</div>
+      <div class="value">${brl(totalCadastrado)}</div>
+    </div>
+    <div class="card">
+      <div class="label">A vencer</div>
+      <div class="value">${brl(aVencer)}</div>
+    </div>
+    <div class="card">
+      <div class="label">Contas pendentes</div>
+      <div class="value">${pendentes.length}</div>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-chip ${filter==='todas'?'active':''}" onclick="setContasFilter('todas')">Todas (${contas.length})</div>
+      <div class="filter-chip ${filter==='pendentes'?'active':''}" onclick="setContasFilter('pendentes')">Pendentes (${pendentes.length})</div>
+      <div class="filter-chip ${filter==='pagas'?'active':''}" onclick="setContasFilter('pagas')">Pagas (${contas.length-pendentes.length})</div>
+    </div>
+
+    <div class="section-title">Vencimentos do mês</div>
+    <p style="color:var(--muted);font-size:12.5px;margin:-6px 0 10px 0;">Toque em uma conta para alternar o status.</p>
+    <div class="card" style="padding:4px 14px;">
+      ${filtered.length===0 ? `<div class="empty"><span class="emoji">📄</span>Nada por aqui.</div>` :
+      filtered.map(c=>`
+        <div class="list-item" style="cursor:pointer;" onclick="togglePago('${c.id}')">
+          <div class="icon-badge">${ICONS.bill}</div>
+          <div class="li-main">
+            <div class="li-title">${c.nome}</div>
+            <div class="li-sub">Vence dia ${c.dia} · ${monthLabel().split(' ')[0].slice(0,3)}</div>
+          </div>
+          <span class="tag ${c.pago?'green':'muted'}">${c.pago?'Pago':'Pendente'}</span>
+          <div class="li-value" style="margin-left:8px;">${brl(c.valor)}</div>
+          <button class="icon-btn-trash" onclick="event.stopPropagation();deleteItem('conta','${c.id}')">${ICONS.trash}</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ---------- Render: Gastos ----------
+function renderGastos(){
+  const gastos = DATA.gastosPessoais.slice().sort((a,b)=> b.data.localeCompare(a.data));
+  const {gastosMes} = computeTotals();
+  return `
+    <div class="card">
+      <div class="label">Gastos pessoais no mês</div>
+      <div class="value">${brl(gastosMes)}</div>
+      <div class="hint">Registre o que acontecer e mantenha o mês atualizado.</div>
+    </div>
+    <div class="actions-row">
+      <button class="btn btn-primary" onclick="openSheet('gasto')">${ICONS.plus}Registrar gasto</button>
+      <button class="btn btn-secondary" onclick="setTab('reservas')">${ICONS.archive}Planejar reservas</button>
+    </div>
+    <div class="section-title">Extrato pessoal</div>
+    <div class="card" style="padding:4px 14px;">
+      ${gastos.length===0 ? `<div class="empty"><span class="emoji">💳</span>Nenhum gasto lançado ainda.</div>` :
+      gastos.map(g=>`
+        <div class="list-item">
+          <div class="icon-badge">${ICONS.wallet}</div>
+          <div class="li-main">
+            <div class="li-title">${g.descricao}<span class="tag">${g.categoria}</span></div>
+            <div class="li-sub">${fmtDate(g.data)} · ${g.forma}</div>
+          </div>
+          <div class="li-value">${brl(g.valor)}</div>
+          <button class="icon-btn-trash" onclick="deleteItem('gasto','${g.id}')">${ICONS.trash}</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ---------- Render: Reservas ----------
+function renderReservas(){
+  const aportes = DATA.aportes.slice().sort((a,b)=> b.data.localeCompare(a.data));
+  const {aportesMes} = computeTotals();
+  return `
+    <div class="card">
+      <div class="label">Aportes no mês</div>
+      <div class="value">${brl(aportesMes)}</div>
+    </div>
+    <div class="actions-row">
+      <button class="btn btn-primary" onclick="openSheet('aporte')">${ICONS.plus}Registrar aporte</button>
+      <button class="btn btn-secondary" onclick="setTab('gastos')">${ICONS.wallet}Voltar para gastos pessoais</button>
+    </div>
+    <div class="section-title">Histórico de aportes</div>
+    <div class="card" style="padding:4px 14px;">
+      ${aportes.length===0 ? `<div class="empty"><span class="emoji">🐷</span>Nenhum aporte registrado ainda.</div>` :
+      aportes.map(a=>`
+        <div class="list-item">
+          <div class="icon-badge">${ICONS.archive}</div>
+          <div class="li-main">
+            <div class="li-title">${a.nome}</div>
+            <div class="li-sub">${fmtDate(a.data)}</div>
+          </div>
+          <div class="li-value">${brl(a.valor)}</div>
+          <button class="icon-btn-trash" onclick="deleteItem('aporte','${a.id}')">${ICONS.trash}</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="section-title">Sugestões de reserva</div>
+    <div class="card">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div class="swatch">${ICONS.shield}</div>
+        <div>
+          <strong style="font-size:14.5px;">Emergência</strong>
+          <div style="color:var(--muted);font-size:13px;margin-top:2px;">Separe uma parte para imprevistos pessoais.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div class="swatch">${ICONS.wrench}</div>
+        <div>
+          <strong style="font-size:14.5px;">Manutenção do carro</strong>
+          <div style="color:var(--muted);font-size:13px;margin-top:2px;">Crie uma reserva para revisões e consertos.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ---------- Sheets (modals) ----------
+function renderSheet(){
+  if(!state.sheet) return `<div class="sheet-backdrop" onclick="closeSheet()"><div class="sheet"></div></div>`;
+  const {name} = state.sheet;
+  let title="", desc="", body="";
+
+  if(name==='iniciarTurno'){
+    title = "Iniciar turno";
+    desc = "Informe a data e a quilometragem antes de sair.";
+    body = `
+      <div class="field"><label>Data do turno</label><input type="date" id="f-data" value="${todayISO()}"></div>
+      <div class="field"><label>KM inicial</label><input type="number" id="f-km" placeholder="Ex: 45200" inputmode="numeric"></div>
+      <button class="btn btn-primary btn-block" onclick="submitIniciarTurno()">${ICONS.car}Iniciar turno</button>
+    `;
+  } else if(name==='finalizarTurno'){
+    title = "Finalizar turno";
+    desc = "Registre o KM final e o faturamento de cada canal.";
+    const t = DATA.turnos.find(x=>x.status==='aberto');
+    body = `
+      <div class="field"><label>KM final</label><input type="number" id="f-kmfinal" placeholder="${t?t.kmInicial:0}" inputmode="numeric"></div>
+      <div class="field"><label>Uber</label><input type="number" id="f-uber" placeholder="0,00" inputmode="decimal"></div>
+      <div class="field"><label>99</label><input type="number" id="f-99" placeholder="0,00" inputmode="decimal"></div>
+      <div class="field"><label>Pix</label><input type="number" id="f-pix" placeholder="0,00" inputmode="decimal"></div>
+      <p style="color:var(--muted-2);font-size:12px;margin:-6px 0 14px 0;">O gasto com combustível é somado automaticamente das despesas rápidas lançadas durante este turno.</p>
+      <button class="btn btn-primary btn-block" onclick="submitFinalizarTurno()">${ICONS.check}Salvar fechamento</button>
+    `;
+  } else if(name==='resumoTurno'){
+    const t = DATA.turnos.find(x=>x.id===state.sheet.payload);
+    if(!t){ title="Resumo do turno"; body = `<div class="empty">Turno não encontrado.</div>`; }
+    else{
+      const total = Number(t.uber||0)+Number(t.noventaenove||0)+Number(t.pix||0);
+      const km = Math.max(0, Number(t.kmFinal||0)-Number(t.kmInicial||0));
+      const ms = (t.horaFim && t.horaInicio) ? (new Date(t.horaFim) - new Date(t.horaInicio)) : 0;
+      const horas = ms/3600000;
+      const valorPorKm = km>0 ? total/km : 0;
+      const temHoras = horas > 0.0166;
+      const valorPorHora = temHoras ? total/horas : 0;
+      const combustivel = DATA.despesasOperacionais.filter(d=>d.turnoId===t.id).reduce((s,d)=>s+Number(d.valor||0),0);
+      const liquido = total - combustivel;
+      title = "Resumo do turno";
+      desc = `Turno de ${fmtDate(t.data)} · ${t.kmInicial} → ${t.kmFinal} km`;
+      body = `
+        <div class="mini-cards" style="margin-bottom:10px;">
+          <div class="card"><div class="label">Faturamento</div><div class="value">${brl(total)}</div></div>
+          <div class="card"><div class="label">KM rodado</div><div class="value">${km} km</div></div>
+        </div>
+        <div class="card">
+          <div class="label">Valor por KM</div>
+          <div class="value">${brl(valorPorKm)}</div>
+        </div>
+        <div class="card">
+          <div class="label">Faturamento por hora</div>
+          <div class="value">${temHoras ? brl(valorPorHora) : '—'}</div>
+          <div class="hint">${temHoras ? 'Turno de ' + formatDuration(ms) : 'Duração muito curta para calcular'}</div>
+        </div>
+        <div class="card">
+          <div class="label">Gasto com combustível</div>
+          <div class="value">${brl(combustivel)}</div>
+          <div class="hint">Somado das despesas rápidas deste turno</div>
+        </div>
+        <div class="card" style="border-color:var(--accent);">
+          <div class="label">Líquido do turno</div>
+          <div class="value" style="color:var(--accent);">${brl(liquido)}</div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="closeSheet()">Fechar</button>
+      `;
+    }
+  } else if(name==='config'){
+    const cfg = DATA.config||{};
+    title = "Sincronização com Google Sheets";
+    desc = "Cole a URL do seu Apps Script para sincronizar os dados com uma planilha.";
+    body = `
+      <div class="field"><label>URL do Apps Script (Web App)</label><input type="url" id="f-sheeturl" placeholder="https://script.google.com/macros/s/.../exec" value="${cfg.sheetsUrl||''}"></div>
+      <p style="color:var(--muted-2);font-size:12px;margin:-6px 0 16px 0;">${cfg.lastSync ? 'Última sincronização: '+new Date(cfg.lastSync).toLocaleString('pt-BR') : 'Ainda não sincronizado.'}</p>
+      <button class="btn btn-primary btn-block" style="margin-bottom:10px;" onclick="saveSheetsConfig()">${ICONS.check}Salvar URL</button>
+      <button class="btn btn-secondary btn-block" onclick="syncToSheets()">${ICONS.sync}Sincronizar agora</button>
+    `;
+  } else if(name==='despesaRapida'){
+    title = "Registrar despesa";
+    desc = "Lançamento rápido de combustível ou custo operacional.";
+    body = `
+      <div class="field"><label>Data</label><input type="date" id="f-data" value="${todayISO()}"></div>
+      <div class="field"><label>Descrição</label><input type="text" id="f-desc" placeholder="Ex: Abastecimento"></div>
+      <div class="field"><label>Valor</label><input type="number" id="f-valor" placeholder="0,00" inputmode="decimal"></div>
+      <button class="btn btn-primary btn-block" onclick="submitDespesaRapida()">${ICONS.check}Salvar despesa</button>
+    `;
+  } else if(name==='contaFixa'){
+    title = "Adicionar conta";
+    desc = "Cadastre uma conta fixa para acompanhar o vencimento.";
+    body = `
+      <div class="field"><label>Nome</label><input type="text" id="f-nome" placeholder="Ex: Aluguel / Condomínio"></div>
+      <div class="row2">
+        <div class="field"><label>Valor</label><input type="number" id="f-valor" placeholder="0,00" inputmode="decimal"></div>
+        <div class="field"><label>Dia do vencimento</label><input type="number" id="f-dia" placeholder="Ex: 10" min="1" max="31" inputmode="numeric"></div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitContaFixa()">${ICONS.check}Adicionar conta</button>
+    `;
+  } else if(name==='gasto'){
+    title = "Registrar gasto";
+    desc = "Lance uma despesa pessoal no extrato do mês.";
+    const cats = ["Alimentação","Mercado","Lazer","Assinaturas","Farmácia","Transporte","Outros"];
+    const formas = ["Débito","Crédito","Pix","Dinheiro"];
+    body = `
+      <div class="field"><label>Descrição</label><input type="text" id="f-desc" placeholder="Ex: Almoço na rua"></div>
+      <div class="row2">
+        <div class="field"><label>Valor</label><input type="number" id="f-valor" placeholder="0,00" inputmode="decimal"></div>
+        <div class="field"><label>Data</label><input type="date" id="f-data" value="${todayISO()}"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Categoria</label><select id="f-cat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div class="field"><label>Forma</label><select id="f-forma">${formas.map(f=>`<option>${f}</option>`).join('')}</select></div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitGasto()">${ICONS.check}Salvar gasto</button>
+    `;
+  } else if(name==='aporte'){
+    title = "Registrar aporte";
+    desc = "Guarde um novo aporte em reservas ou investimentos.";
+    const tipos = ["Tesouro Selic","Tesouro IPCA+","CDB Liquidez Diária","FIIs (Renda Passiva)","Poupança","Outro"];
+    body = `
+      <div class="field"><label>Tipo</label><select id="f-tipo">${tipos.map(t=>`<option>${t}</option>`).join('')}</select></div>
+      <div class="row2">
+        <div class="field"><label>Valor</label><input type="number" id="f-valor" placeholder="0,00" inputmode="decimal"></div>
+        <div class="field"><label>Data</label><input type="date" id="f-data" value="${todayISO()}"></div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitAporte()">${ICONS.check}Salvar aporte</button>
+    `;
+  }
+
+  return `
+    <div class="sheet-backdrop open" onclick="if(event.target===this)closeSheet()">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head"><h3>${title}</h3><button class="close" onclick="closeSheet()">${ICONS.x}</button></div>
+        <p class="desc">${desc}</p>
+        ${body}
+      </div>
+    </div>
+  `;
+}
+
+// ---------- Submit handlers ----------
+function submitIniciarTurno(){
+  const data = document.getElementById('f-data').value || todayISO();
+  const km = document.getElementById('f-km').value || 0;
+  DATA.turnos.push({id:uid(), data, horaInicio:new Date().toISOString(), horaFim:null, kmInicial:Number(km), kmFinal:null, uber:0, noventaenove:0, pix:0, status:'aberto'});
+  saveData(); closeSheet(); setTab('trabalho'); showToast('Turno iniciado'); maybeSync();
+}
+function submitFinalizarTurno(){
+  const t = DATA.turnos.find(x=>x.status==='aberto');
+  if(!t) return closeSheet();
+  t.kmFinal = Number(document.getElementById('f-kmfinal').value||t.kmInicial);
+  t.uber = Number(document.getElementById('f-uber').value||0);
+  t.noventaenove = Number(document.getElementById('f-99').value||0);
+  t.pix = Number(document.getElementById('f-pix').value||0);
+  t.horaFim = new Date().toISOString();
+  t.status = 'concluido';
+  saveData(); setTab('trabalho'); openSheet('resumoTurno', t.id); showToast('Turno finalizado'); maybeSync();
+}
+function submitDespesaRapida(){
+  const data = document.getElementById('f-data').value || todayISO();
+  const desc = document.getElementById('f-desc').value || 'Despesa';
+  const valor = Number(document.getElementById('f-valor').value||0);
+  const turnoAberto = DATA.turnos.find(x=>x.status==='aberto');
+  DATA.despesasOperacionais.push({id:uid(), data, hora:new Date().toISOString(), descricao:desc, valor, turnoId: turnoAberto ? turnoAberto.id : null});
+  saveData(); closeSheet(); render(); showToast('Despesa registrada'); maybeSync();
+}
+function submitContaFixa(){
+  const nome = document.getElementById('f-nome').value || 'Conta';
+  const valor = Number(document.getElementById('f-valor').value||0);
+  const dia = Number(document.getElementById('f-dia').value||1);
+  DATA.contasFixas.push({id:uid(), nome, valor, dia, pago:false});
+  saveData(); closeSheet(); render(); showToast('Conta adicionada'); maybeSync();
+}
+function togglePago(id){
+  const c = DATA.contasFixas.find(x=>x.id===id);
+  if(c){ c.pago = !c.pago; saveData(); render(); maybeSync(); }
+}
+function marcarTodasPagas(){
+  DATA.contasFixas.forEach(c=>c.pago=true);
+  saveData(); render(); showToast('Todas marcadas como pagas'); maybeSync();
+}
+function setContasFilter(f){ state.contasFilter = f; render(); }
+function submitGasto(){
+  const desc = document.getElementById('f-desc').value || 'Gasto';
+  const valor = Number(document.getElementById('f-valor').value||0);
+  const data = document.getElementById('f-data').value || todayISO();
+  const categoria = document.getElementById('f-cat').value;
+  const forma = document.getElementById('f-forma').value;
+  DATA.gastosPessoais.push({id:uid(), descricao:desc, valor, data, categoria, forma});
+  saveData(); closeSheet(); render(); showToast('Gasto registrado'); maybeSync();
+}
+function submitAporte(){
+  const nome = document.getElementById('f-tipo').value;
+  const valor = Number(document.getElementById('f-valor').value||0);
+  const data = document.getElementById('f-data').value || todayISO();
+  DATA.aportes.push({id:uid(), nome, valor, data});
+  saveData(); closeSheet(); render(); showToast('Aporte registrado'); maybeSync();
+}
+
+// ---------- Main render ----------
+const TITLES = {
+  visao: {h:'Visão geral', s:null},
+  trabalho: {h:'Trabalho no carro', s:null},
+  contas: {h:'Contas fixas', s:null},
+  gastos: {h:'Gastos pessoais', s:null},
+  reservas: {h:'Reservas', s:null},
+};
+
+function render(){
+  const t = TITLES[state.tab];
+  let content = '';
+  if(state.tab==='visao') content = renderVisao();
+  else if(state.tab==='trabalho') content = renderTrabalho();
+  else if(state.tab==='contas') content = renderContas();
+  else if(state.tab==='gastos') content = renderGastos();
+  else if(state.tab==='reservas') content = renderReservas();
+
+  root.innerHTML = `
+    <div class="status-spacer"></div>
+    <header class="topbar">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <h1>${t.h}</h1>
+        <button class="gear-btn" onclick="openSheet('config')">${ICONS.gear}</button>
+      </div>
+    </header>
+    <main>${content}</main>
+    ${renderTabbar()}
+    ${renderSheet()}
+  `;
+}
+
+render();
+
+// Register service worker for offline installability
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
